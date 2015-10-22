@@ -1,1 +1,2 @@
-# akka-training
+# Akka training
+
