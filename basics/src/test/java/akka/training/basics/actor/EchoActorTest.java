@@ -1,27 +1,40 @@
 package akka.training.basics.actor;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.typesafe.config.ConfigFactory;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import akka.testkit.TestKit;
+import akka.testkit.JavaTestKit;
 
-public class EchoActorTest extends TestKit {
+public class EchoActorTest {
 
-    static ActorSystem actorSystem = ActorSystem.create("actor-system-test", ConfigFactory.load());
+    static ActorSystem system;
 
-    public EchoActorTest() {
-        super(actorSystem);
+    @BeforeClass
+    public static void setup() {
+        system = ActorSystem.create();
+    }
+
+    @AfterClass
+    public static void teardown() {
+        JavaTestKit.shutdownActorSystem(system);
+        system = null;
     }
 
     @Test
     public void testEchoActorRepliesWithTheSameStringItRecieves() {
-        final ActorRef echoActorRef = actorSystem.actorOf(Props.create(EchoActor.class));
-        echoActorRef.tell("Hi", super.testActor());
-        expectMsg("Hi");
-    }
+        new JavaTestKit(system) {
 
+            {
+                final Props props = Props.create(EchoActor.class);
+                final ActorRef subject = system.actorOf(props);
+                subject.tell("Hi", getRef());
+                expectMsgEquals("Hi");
+            }
+        };
+
+    }
 }
