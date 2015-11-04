@@ -42,21 +42,6 @@ public class SupervisorActor extends UntypedActor {
         }
     });
 
-    private static SupervisorStrategy strategy2 = new OneForOneStrategy(10, Duration.create(10, TimeUnit.SECONDS),
-            new Function<Throwable, Directive>() {
-        @Override
-        public Directive apply(Throwable t) {
-            if (t instanceof IllegalArgumentException) {
-                return SupervisorStrategy.stop();
-            } else if (t instanceof NullPointerException) {
-                return SupervisorStrategy.resume();
-            } else {
-                return SupervisorStrategy.escalate();
-            }
-        }
-    });
-
-
     @Override
     public SupervisorStrategy supervisorStrategy() {
         return strategy;
