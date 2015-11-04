@@ -2,17 +2,16 @@ package akka.training.basics.actor;
 
 import java.util.List;
 
-import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 
 public class SequencingActor extends UntypedActor {
 
-    final ActorRef actor;
+    //    final ActorRef actor;
     final List<Integer> headList;
     final List<Integer> tailList;
 
-    public SequencingActor(ActorRef actorRef, List<Integer> headList, List<Integer> tailList) {
-        this.actor = actorRef;
+    public SequencingActor(List<Integer> headList, List<Integer> tailList) {
+        //        this.actor = actorRef;
         this.headList = headList;
         this.tailList = tailList;
     }
