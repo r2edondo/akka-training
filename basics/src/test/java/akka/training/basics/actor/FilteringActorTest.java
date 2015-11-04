@@ -1,28 +1,42 @@
 package akka.training.basics.actor;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.typesafe.config.ConfigFactory;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import akka.testkit.TestKit;
+import akka.testkit.JavaTestKit;
 
-public class FilteringActorTest extends TestKit {
+public class FilteringActorTest {
 
-    static ActorSystem system = ActorSystem.create("actor-system-test", ConfigFactory.load());
+    static ActorSystem system;
 
-    public FilteringActorTest() {
-        super(system);
+    @BeforeClass
+    public static void setup() {
+        system = ActorSystem.create();
+    }
+
+    @AfterClass
+    public static void teardown() {
+        JavaTestKit.shutdownActorSystem(system);
+        system = null;
     }
 
     @Test
     public void testFilteringActor() {
-        final ActorRef filteringActorRef = system.actorOf(Props.create(FilteringActor.class));
-        filteringActorRef.tell("test message", super.testActor());
-        expectMsg("test message");
-        filteringActorRef.tell(1, super.testActor());
-        expectNoMsg();
+        new JavaTestKit(system) {
+
+            {
+                final Props props = Props.create(FilteringActor.class);
+                final ActorRef subject = system.actorOf(props);
+                subject.tell("test message", getRef());
+                expectMsgEquals("test message");
+                subject.tell(1, getRef());
+                expectNoMsg();
+            }
+        };
+
     }
 }
