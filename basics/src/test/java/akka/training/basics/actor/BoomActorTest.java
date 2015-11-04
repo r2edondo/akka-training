@@ -3,27 +3,34 @@ package akka.training.basics.actor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.typesafe.config.ConfigFactory;
 
 import akka.actor.Actor;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import akka.testkit.JavaTestKit;
 import akka.testkit.TestActorRef;
-import akka.testkit.TestKit;
 
-public class BoomActorTest extends TestKit {
+public class BoomActorTest {
 
-    static ActorSystem actorSystem = ActorSystem.create("actor-system-test", ConfigFactory.load());
+    static ActorSystem system;
 
-    public BoomActorTest() {
-        super(actorSystem);
+    @BeforeClass
+    public static void setup() {
+        system = ActorSystem.create();
+    }
+
+    @AfterClass
+    public static void teardown() {
+        JavaTestKit.shutdownActorSystem(system);
+        system = null;
     }
 
     @Test
     public void testBoomActorReceivingStringMessage() {
-        final TestActorRef<Actor> child = TestActorRef.apply(Props.create(BoomActor.class), actorSystem);
+        final TestActorRef<Actor> child = TestActorRef.apply(Props.create(BoomActor.class), system);
         try {
             child.receive("do something");
             // should not reach here
@@ -35,7 +42,7 @@ public class BoomActorTest extends TestKit {
 
     @Test
     public void testBoomActorReceivingIntegerMessage() {
-        final TestActorRef<Actor> child = TestActorRef.apply(Props.create(BoomActor.class), actorSystem);
+        final TestActorRef<Actor> child = TestActorRef.apply(Props.create(BoomActor.class), system);
         try {
             child.receive(123);
             // should not reach here
@@ -44,4 +51,5 @@ public class BoomActorTest extends TestKit {
             assertEquals(e.getMessage(), "caput");
         }
     }
+
 }
