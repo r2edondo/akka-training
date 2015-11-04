@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?p2f version='1.0.0'?>
+<p2f version='1.0.0'>
+  <ius size='8'>
+    <iu id='eu.openanalytics.editor.docker.feature.group' name='Dockerfile Editor' version='1.0.0.201506222127'>
+      <repositories size='0'/>
+    </iu>
+    <iu id='net.sf.eclipsecs.feature.group' name='Eclipse Checkstyle Plug-in' version='6.9.0.201508291549'>
+      <repositories size='1'>
+        <repository location='http://eclipse-cs.sourceforge.net/update/'/>
+      </repositories>
+    </iu>
+    <iu id='epp.package.jee' name='Eclipse IDE for Java EE Developers' version='4.5.0.20150621-1200'>
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/releases/mars'/>
+      </repositories>
+    </iu>
+    <iu id='org.springsource.ide.eclipse.gradle.feature.feature.group' name='Gradle IDE' version='3.7.0.201506251228-RELEASE'>
+      <repositories size='2'>
+        <repository location='http://dist.springsource.com/release/TOOLS/update/e4.5/'/>
+        <repository location='http://www.nodeclipse.org/updates/'/>
+      </repositories>
+    </iu>
+    <iu id='org.nodeclipse.enide.editors.gradle.feature.feature.group' name='Minimalist Gradle Editor' version='1.0.2.201509250223'>
+      <repositories size='1'>
+        <repository location='http://www.nodeclipse.org/updates/'/>
+      </repositories>
+    </iu>
+    <iu id='org.scala-ide.sbt.source.feature.feature.group' name='sbt 0.13.8 sources' version='4.2.0.201509281533'>
+      <repositories size='1'>
+        <repository location='http://download.scala-ide.org/sdk/lithium/e44/scala211/stable/site'/>
+      </repositories>
+    </iu>
+    <iu id='org.scala-ide.sdt.feature.feature.group' name='Scala IDE for Eclipse' version='4.2.0.vfinal-2_11-201509281533-b2cb96d'>
+      <repositories size='1'>
+        <repository location='http://download.scala-ide.org/sdk/lithium/e44/scala211/stable/site'/>
+      </repositories>
+    </iu>
+    <iu id='org.scala-ide.sdt.source.feature.feature.group' name='Scala IDE for Eclipse Source' version='4.2.0.vfinal-2_11-201509281533-b2cb96d'>
+      <repositories size='1'>
+        <repository location='http://download.scala-ide.org/sdk/lithium/e44/scala211/stable/site'/>
+      </repositories>
+    </iu>
+  </ius>
+</p2f>
