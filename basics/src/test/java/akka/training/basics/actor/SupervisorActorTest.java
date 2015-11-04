@@ -1,21 +1,16 @@
 package akka.training.basics.actor;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.concurrent.TimeUnit;
 
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import com.typesafe.config.ConfigFactory;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import akka.actor.Terminated;
 import akka.pattern.Patterns;
 import akka.testkit.JavaTestKit;
 import akka.util.Timeout;
@@ -23,52 +18,58 @@ import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
-public class SupervisorActorTest  {
+public class SupervisorActorTest {
 
-    private static ActorSystem actorSystem;
-
-    private JavaTestKit probe;
+    static ActorSystem system;
 
     @BeforeClass
-    public static void setUpClass() {
-        actorSystem = ActorSystem.create("actor-system-test", ConfigFactory.load());
-    }
-
-    @Before
-    public void setUp(){
-        this.probe = new JavaTestKit(actorSystem);
+    public static void setup() {
+        system = ActorSystem.create();
     }
 
     @AfterClass
-    public static void tearDownClass() {
-        JavaTestKit.shutdownActorSystem(actorSystem);
-        actorSystem = null;
+    public static void teardown() {
+        JavaTestKit.shutdownActorSystem(system);
+        system = null;
     }
-
-
-    @Test
-    @Ignore
-    public void testSupervisorStrategyWhenChildIsResumed() throws Exception {
-        final ActorRef supervisor = actorSystem.actorOf(Props.create(SupervisorActor.class), "supervisor1");
-        final Timeout timeout = new Timeout(Duration.create(5, TimeUnit.SECONDS));
-        final Future<Object> future = Patterns.ask(supervisor, Props.create(BoomActor.class), timeout);
-        final ActorRef child = (ActorRef) Await.result(future, timeout.duration());
-        child.tell(123, null);
-        this.probe.watch(child);
-        final Terminated msg = this.probe.expectMsgClass(Terminated.class);
-        assertEquals(msg.getActor(), child);
-    }
-
 
     @Test
     public void testSupervisorStrategyWhenChildIsStopped() throws Exception {
-        final ActorRef supervisor = actorSystem.actorOf(Props.create(SupervisorActor.class), "supervisor2");
-        final Timeout timeout = new Timeout(Duration.create(5, TimeUnit.SECONDS));
-        final Future<Object> future = Patterns.ask(supervisor, Props.create(BoomActor.class), timeout);
-        final ActorRef child = (ActorRef) Await.result(future, timeout.duration());
-        this.probe.watch(child);
-        child.tell("do something",null);
-        final Terminated msg = this.probe.expectMsgClass(Terminated.class);
-        assertEquals(msg.getActor(), child);
+        new JavaTestKit(system) {
+
+            {
+                final Props props = Props.create(SupervisorActor.class);
+                final ActorRef subject = system.actorOf(props);
+                // create a BoomActor child actor supervised by the SupervisorActor
+                final Timeout timeout = new Timeout(Duration.create(5, TimeUnit.SECONDS));
+                final Future<Object> future = Patterns.ask(subject, Props.create(BoomActor.class), timeout);
+                final ActorRef child = (ActorRef) Await.result(future, timeout.duration());
+                watch(child);
+                child.tell("123", null);
+                expectTerminated(Duration.create(1, TimeUnit.SECONDS), child);
+            }
+        };
+
     }
+
+    @Test
+    public void testSupervisorStrategyWhenChildIsResumed() throws Exception {
+        new JavaTestKit(system) {
+
+            {
+                final Props props = Props.create(SupervisorActor.class);
+                final ActorRef subject = system.actorOf(props);
+                // create a BoomActor child actor supervised by the SupervisorActor
+                final Timeout timeout = new Timeout(Duration.create(5, TimeUnit.SECONDS));
+                final Future<Object> future = Patterns.ask(subject, Props.create(BoomActor.class), timeout);
+                final ActorRef child = (ActorRef) Await.result(future, timeout.duration());
+                child.tell(123, null);
+                // FIXME: assert that the child actor has been resumed
+                assertFalse(child.isTerminated());
+
+            }
+        };
+
+    }
+
 }
